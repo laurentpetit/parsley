@@ -157,7 +157,7 @@
         accept? (seq accepts)]
     (when (next reduces) 
       (throw (Exception. (apply str "at state " state "\n  reduce/reduce conflict " (interpose "\n" reduces)))))
-    (when (and reduction (seq shifts))
+    #_(when (and reduction (seq shifts))
       (throw (Exception. (str "at state " state "\n shift/reduce conflict " shifts "\n" reduces))))
     (table-state (matcher (keys shifts)) shifts reduction gotos accept?)))
 
