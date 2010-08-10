@@ -5,9 +5,22 @@
 (defn nodes-vec [nodes]
   (vec (mapcat #(->> % (tree-seq branch? :content) (remove branch?)) nodes)))
 
+(defn- children-info [children]
+  (reduce
+    (fn [[combined count-acc] child]
+      (let [child-count (if (string? child) (count child) (or (:count child) 0))]
+        [(conj combined count-acc) (+ count-acc child-count)]))
+    [[] 0]
+    children))
+
 (defn make-node [tag children]
   (if tag 
-    {:tag tag :content (nodes-vec children)}
+    (let [children (nodes-vec children)
+          [combined count] (children-info children)]
+      {:tag tag 
+       :content children
+       :count count
+       :content-cumulative-count combined})
     {:tag nil :content children}))
 
 (defn fold [events]
