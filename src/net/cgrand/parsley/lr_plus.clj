@@ -3,6 +3,8 @@
   (:require [net.cgrand.parsley.fold :as f]
             [net.cgrand.parsley.util :as u]))
 
+(def *start* 0)
+
 ;; pushdown automaton
 (defrecord TableState [token-matcher shifts reduce gotos accept?])
 (defn table-state [token-matcher shifts reduce goto accept?] 
@@ -100,8 +102,8 @@
  [table state s eof]
   (let [[stack _ rem events] state
         s (if (= "" rem) s (str rem s))]
-    (loop [stack (transient (or stack [::S])) events events s s wm (count stack)]
-      (when-let [cs (table (my-peek stack))]
+    (loop [stack (transient (or stack [*start*])) events events s s wm (count stack)]
+      (when-let [cs (get table (my-peek stack))]
         (u/cond 
           (and (empty? s) (:accept? cs))
             [(persistent! stack) (dec wm) "" events]
@@ -109,20 +111,20 @@
           action
             (let [[sym n] action
                   stack (popN! stack n)
-                  cs (table (my-peek stack))
+                  cs (get table (my-peek stack))
                   wm (Math/min wm (count stack))]
-              (recur (conj! stack ((:gotos cs) sym)) (conj events action) s wm))
+              (recur (conj! stack ((:gotos cs) sym)) (conj! events action) s wm))
           :else
             (u/when-let [tm (:token-matcher cs)
                        [n id] (match tm s eof)]
               (if (neg? n)
-                [(persistent! stack) (dec wm) s events]
+                [(persistent! stack) (dec wm) s (persistent! events)]
                 (let [token (subs s 0 n)
                       s (subs s n)
                       wm (Math/min wm (count stack))]
-                  (recur (conj! stack ((:shifts cs) id)) (conj events token) s wm)))))))))
+                  (recur (conj! stack ((:shifts cs) id)) (conj! events token) s wm)))))))))
 
-(def zero [[[::S] ""] 0 f/empty-folding-stack nil])
+(def zero [[[*start*] ""] 0 f/empty-folding-stack nil])
 
 (defn step [table state s]
   (u/when-let [[[stack rem :as start]] state
@@ -159,7 +161,7 @@
           gotos (filter-keys follows keyword?)
           shifts (filter-keys (dissoc follows nil) (complement gotos))
           reduces (follows nil)
-          accepts (filter (fn [[s _ r]] (= ::S s)) reduces)
+          accepts (filter (fn [[s _ r]] (= *start* s)) reduces)
           reduces (reduce disj reduces accepts)
           reduction (when-let [[sym n] (first reduces)] [sym n (tags sym)])
           accept? (seq accepts)]
@@ -173,7 +175,7 @@
 (defn to-states [{:keys [gotos shifts]}]
   (concat (vals gotos) (vals shifts)))
 
-(defn lr-table [[grammar tags]]
+(defn lr-table* [[grammar tags]]
   (let [init-states (mapvals grammar #(set (for [prod %2] [%1 (count prod) prod])))
         close (partial close init-states)
         state0 (-> ::S init-states close)
@@ -189,6 +191,16 @@
         table (assoc table ::S (table state0))]
     table))
 
+(defn number-states [table]
+  (let [table-without-start (dissoc table ::S)
+        mapping (zipmap (cons ::S (keys table-without-start)) (iterate inc 0))
+        renum (fn [m] (reduce #(update-in %1 [%2] mapping) m (keys m)))]
+    (into []
+       (for [{shifts :shifts gotos :gotos :as v} (cons (::S table) (vals table-without-start))]
+         (assoc v :shifts (renum shifts) :gotos (renum gotos))))))
+
+(defn lr-table [arg]
+  (number-states (lr-table* arg)))
 
 (comment
     (def g 
