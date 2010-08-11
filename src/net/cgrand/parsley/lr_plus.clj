@@ -153,7 +153,7 @@
         gotos (filter-keys follows keyword?)
         shifts (filter-keys (dissoc follows nil) (complement gotos))
         reduces (follows nil)
-        accepts (filter (fn [[s _ r]] (= *start* s)) reduces)
+        accepts (filter (fn [[s _ r]] (= ::S s)) reduces)
         reduces (reduce disj reduces accepts)
         reduction (when-let [[sym n] (first reduces)] [sym n (tags sym)])
         accept? (seq accepts)]
