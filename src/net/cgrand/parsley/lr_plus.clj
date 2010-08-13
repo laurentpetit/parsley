@@ -16,7 +16,7 @@
   Character
     (match [this ^String s eof]
       (cond
-        (.isEmpty s)
+        (zero? (.length s))
           (when-not eof [-1])
         (= (.charAt s 0) this)
           [1 this] 
@@ -58,7 +58,7 @@
   TokenMatcher
     (match [this s eof]
       (let [^String s s]
-        (if (.isEmpty s)
+        (if (zero? (.length s))
           (match tm s eof)
           (let [cp (.codePointAt s 0)]
             (if (< cp (int 128))
