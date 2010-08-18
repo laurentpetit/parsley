@@ -102,16 +102,16 @@
  [table state s eof]
   (let [[stack _ rem events] state
         s (if (= "" rem) s (str rem s))]
-    (loop [stack (transient (or stack [*start*])) events events s s wm (count stack)]
-      (when-let [cs (get table (my-peek stack))]
+    (loop [stack (transient (or stack [*start*])) events (transient events) s s wm (count stack)]
+      (when-let [cs (table (my-peek stack))]
         (u/cond 
           (and (empty? s) (:accept? cs))
-            [(persistent! stack) (dec wm) "" events]
+            [(persistent! stack) (dec wm) "" (persisten! events)]
           :let [action (:reduce cs)]
           action
             (let [[sym n] action
                   stack (popN! stack n)
-                  cs (get table (my-peek stack))
+                  cs (table (my-peek stack))
                   wm (Math/min wm (count stack))]
               (recur (conj! stack ((:gotos cs) sym)) (conj! events action) s wm))
           :else
@@ -194,10 +194,11 @@
 (defn number-states [table]
   (let [table-without-start (dissoc table ::S)
         mapping (zipmap (cons ::S (keys table-without-start)) (iterate inc 0))
-        renum (fn [m] (reduce #(update-in %1 [%2] mapping) m (keys m)))]
-    (into []
-       (for [{shifts :shifts gotos :gotos :as v} (cons (::S table) (vals table-without-start))]
-         (assoc v :shifts (renum shifts) :gotos (renum gotos))))))
+        renum (fn [m] (reduce #(update-in %1 [%2] mapping) m (keys m)))
+        atable (to-array
+                 (for [{shifts :shifts gotos :gotos :as v} (cons (::S table) (vals table-without-start))]
+                   (assoc v :shifts (renum shifts) :gotos (renum gotos))))]
+    #(when % (aget atable (int %)))))
 
 (defn lr-table [arg]
   (number-states (lr-table* arg)))
