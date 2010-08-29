@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Parsley
 Bundle-SymbolicName: parsley;singleton:=true
-Bundle-Version: 0.0.2.STABLE01
+Bundle-Version: 0.0.4.BETA01
 Bundle-ClassPath: clj.jar,
  classes/
 Export-Package: net.cgrand,
