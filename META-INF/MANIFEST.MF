@@ -2,15 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Parsley
 Bundle-SymbolicName: parsley;singleton:=true
-Bundle-Version: 0.0.5.STABLE01
-Bundle-ClassPath: clj.jar,
+Bundle-Version: 0.0.6.BETA5
+Bundle-ClassPath: .,
  classes/
-Export-Package: net.cgrand,
- net.cgrand.parsley
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Christophe Grand
 Require-Bundle: ccw.clojure;bundle-version="1.2.0",
  ccw.clojurecontrib;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Eclipse-RegisterBuddy: ccw.clojure
-Eclipse-BuddyPolicy: registered
+Export-Package: net.cgrand,
+ net.cgrand.parsley
