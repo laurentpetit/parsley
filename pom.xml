@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <modelVersion>4.0.0</modelVersion>
+        
+        <groupId>ccw</groupId>
+        <artifactId>parsley</artifactId>
+        <packaging>eclipse-plugin</packaging>
+        <version>0.0.6.STABLE01</version>
+
+        <parent>
+                <groupId>ccw</groupId>
+                <artifactId>ccw_pomtemplate</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+        </parent>
+        
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>com.theoryinpractise</groupId>
+                                <artifactId>clojure-maven-plugin</artifactId>
+                                <version>${clojure-maven-plugin.version}</version>
+                                <configuration>
+                                        <sourceDirectories>
+                                                <sourceDirectory>src</sourceDirectory>
+                                        </sourceDirectories>
+                                </configuration>
+                        </plugin>
+               </plugins>
+        </build>
+
+        <dependencies>
+                <dependency>
+                        <groupId>ccw</groupId>
+                        <artifactId>ccw.clojure</artifactId>
+                        <version>${ccw.clojure.version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>ccw</groupId>
+                        <artifactId>ccw.clojurecontrib</artifactId>
+                        <version>${ccw.clojure.version}</version>
+                </dependency>
+        </dependencies>
+</project>
