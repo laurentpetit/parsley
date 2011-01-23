@@ -6,7 +6,7 @@
         <modelVersion>4.0.0</modelVersion>
         
         <groupId>org.lpetit</groupId>
-        <artifactId>parsley</artifactId>
+        <artifactId>net.cgrand.parsley</artifactId>
         <packaging>eclipse-plugin</packaging>
         <version>0.0.6.STABLE01</version>
         
@@ -61,11 +61,6 @@
                 <dependency>
                         <groupId>org.clojure</groupId>
                         <artifactId>clojure</artifactId>
-                        <version>1.2.0</version>
-                </dependency>
-                <dependency>
-                        <groupId>org.clojure</groupId>
-                        <artifactId>clojure-contrib</artifactId>
                         <version>1.2.0</version>
                 </dependency>
         </dependencies>
