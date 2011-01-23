@@ -8,7 +8,7 @@
         <groupId>org.lpetit</groupId>
         <artifactId>net.cgrand.parsley</artifactId>
         <packaging>eclipse-plugin</packaging>
-        <version>0.0.6.STABLE01</version>
+        <version>0.0.6.STABLE02</version>
         
         <name>Repackaging by Laurent Petit of Parsley, a creation of Christophe Grand.</name>
         <description>a DSL for creating parsers in Clojure</description>
@@ -52,6 +52,10 @@
                                         <sourceDirectories>
                                                 <sourceDirectory>src</sourceDirectory>
                                         </sourceDirectories>
+                                        <!-- To take advantage of the compilers syntax checking, 
+                                             but wish to prevent any AOT classes from appearing 
+                                             in the maven generated JAR file -->
+                                        <temporaryOutputDirectory>true</temporaryOutputDirectory>
                                 </configuration>
                         </plugin>
                </plugins>
