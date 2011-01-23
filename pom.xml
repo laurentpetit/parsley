@@ -4,8 +4,8 @@
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <modelVersion>4.0.0</modelVersion>
         
-        <groupId>ccw</groupId>
-        <artifactId>parsley</artifactId>
+        <groupId>org.lpetit</groupId>
+        <artifactId>net.cgrand.parsley</artifactId>
         <packaging>eclipse-plugin</packaging>
         <version>0.0.6.STABLE01</version>
 
@@ -34,11 +34,6 @@
                 <dependency>
                         <groupId>ccw</groupId>
                         <artifactId>ccw.clojure</artifactId>
-                        <version>${ccw.clojure.version}</version>
-                </dependency>
-                <dependency>
-                        <groupId>ccw</groupId>
-                        <artifactId>ccw.clojurecontrib</artifactId>
                         <version>${ccw.clojure.version}</version>
                 </dependency>
         </dependencies>
