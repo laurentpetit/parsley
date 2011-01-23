@@ -52,11 +52,25 @@
                                         <sourceDirectories>
                                                 <sourceDirectory>src</sourceDirectory>
                                         </sourceDirectories>
+                                        <namespaces>
+                                                <namespace>net.cgrand.parsley</namespace>
+                                        </namespaces>
+                                        <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
                                         <!-- To take advantage of the compilers syntax checking, 
                                              but wish to prevent any AOT classes from appearing 
                                              in the maven generated JAR file -->
                                         <temporaryOutputDirectory>true</temporaryOutputDirectory>
                                 </configuration>
+                                <!--
+                                <executions>
+                                        <execution>
+                                                <phase>compile</phase>
+                                                <goals>
+                                                        <goal>compile</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                                -->
                         </plugin>
                </plugins>
         </build>
