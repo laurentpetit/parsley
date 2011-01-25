@@ -91,4 +91,12 @@
                 </license>
         </licenses>
 
+        <repositories>
+                <repository>
+                        <id>ccw</id>
+                        <layout>p2</layout>
+                        <url>http://updatesite.counterclockwise.googlecode.com/hg/</url>
+                </repository>
+        </repositories>
+
 </project>
