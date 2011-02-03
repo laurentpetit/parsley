@@ -7,7 +7,7 @@
         <groupId>org.lpetit</groupId>
         <artifactId>net.cgrand.parsley</artifactId>
         <packaging>eclipse-plugin</packaging>
-        <version>0.0.7-SNAPSHOT</version>
+        <version>0.0.7.STABLE01</version>
         
         <name>Repackaging by Laurent Petit of Parsley, a creation of Christophe Grand.</name>
         <description>a DSL for creating parsers in Clojure</description>
@@ -76,6 +76,10 @@
         </licenses>
 
         <repositories>
+                <repository>
+                        <id>clojars.org</id>
+                        <url>http://clojars.org/repo</url>
+                </repository>
                 <repository>
                         <id>ccw</id>
                         <layout>p2</layout>
