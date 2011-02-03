@@ -8,7 +8,7 @@
         <groupId>org.lpetit</groupId>
         <artifactId>net.cgrand.parsley</artifactId>
         <packaging>eclipse-plugin</packaging>
-        <version>0.0.6.STABLE02</version>
+        <version>0.0.7-SNAPSHOT</version>
         
         <name>Repackaging by Laurent Petit of Parsley, a creation of Christophe Grand.</name>
         <description>a DSL for creating parsers in Clojure</description>
@@ -94,7 +94,6 @@
                 <repository>
                         <id>ccw</id>
                         <layout>p2</layout>
-                        <!--url>file:/home/lpetit/projects/ccw.updatesite</url-->
                         <url>http://updatesite.counterclockwise.googlecode.com/hg/</url>
                 </repository>
         </repositories>
