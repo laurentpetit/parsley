@@ -26,6 +26,17 @@
        :content-cumulative-count combined})
     {:tag nil :content (nodes-vec children)}))
 
+;; supprimer lorsque les tests de perf seront terminés
+(defn make-node2 [tag children]
+  (if tag 
+    (let [children (do (println "nodes-vec") (time (nodes-vec children)))
+          [combined count] (do (println "children-info")  (time (children-info children)))]
+      {:tag tag 
+       :content children
+       :count count
+       :content-cumulative-count combined})
+    {:tag nil :content (nodes-vec children)}))
+
 (defprotocol Folding
   (pending-events [fs] "Returns a collection of pending events")
   (nodes [fs] "Returns a collection of nodes (incl. unexpected input).")

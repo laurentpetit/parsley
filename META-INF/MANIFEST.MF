@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Parsley
 Bundle-SymbolicName: net.cgrand.parsley;singleton:=true
-Bundle-Version: 0.0.7.STABLE02
+Bundle-Version: 0.0.8.STABLE01
 Bundle-ClassPath: .,
  classes/
 Bundle-ActivationPolicy: lazy
