@@ -102,27 +102,27 @@
  [table state s eof]
   (let [[stack _ rem events] state
         s (if (= "" rem) s (str rem s))]
-    (loop [stack (transient (or stack [*start*])) events (transient events) s s wm (count stack)]
+    (loop [stack (transient (or stack [*start*])) events events s s wm (count stack)]
       (when-let [cs (table (my-peek stack))]
         (u/cond 
           (and (empty? s) (:accept? cs))
-            [(persistent! stack) (dec wm) "" (persisten! events)]
+            [(persistent! stack) (dec wm) "" events]
           :let [action (:reduce cs)]
           action
             (let [[sym n] action
                   stack (popN! stack n)
                   cs (table (my-peek stack))
                   wm (Math/min wm (count stack))]
-              (recur (conj! stack ((:gotos cs) sym)) (conj! events action) s wm))
+              (recur (conj! stack ((:gotos cs) sym)) (conj events action) s wm))
           :else
             (u/when-let [tm (:token-matcher cs)
                        [n id] (match tm s eof)]
               (if (neg? n)
-                [(persistent! stack) (dec wm) s (persistent! events)]
+                [(persistent! stack) (dec wm) s events]
                 (let [token (subs s 0 n)
                       s (subs s n)
                       wm (Math/min wm (count stack))]
-                  (recur (conj! stack ((:shifts cs) id)) (conj! events token) s wm)))))))))
+                  (recur (conj! stack ((:shifts cs) id)) (conj events token) s wm)))))))))
 
 (def zero [[[*start*] ""] 0 f/empty-folding-stack nil])
 
