@@ -37,13 +37,16 @@
        :content-cumulative-count combined})
     {:tag nil :content (nodes-vec children)}))
 
+(defn make-unexpected [s]
+  {:tag ::unexpected :content [s]})
+
 (defprotocol Folding
   (pending-events [fs] "Returns a collection of pending events")
   (nodes [fs] "Returns a collection of nodes (incl. unexpected input).")
   (nodes-count [fs] "Returns the number of regular nodes on the complete stack.")
   (cat [fs another-fs]))
 
-(defn unexpected? [node] false)
+(defn unexpected? [node] (= (:tag node) ::unexpected))
 
 (defn- tail [complete n]
   (loop [i (dec (count complete)) to-go n]
@@ -53,12 +56,11 @@
       :let [to-go (dec to-go)]
       (zero? to-go)
         (subvec complete i)
-      :else
-        (recur (dec i) to-go))))
+      (recur (dec i) to-go))))
 
-(declare empty-folding-stack)
+(declare empty-folding-queue)
 
-(deftype FoldingStack [pending complete ncnt]
+(deftype FoldingQueue [pending complete ncnt]
   Folding
   (pending-events [fs] pending)
   (nodes [fs] complete)
@@ -66,7 +68,7 @@
   (cat [this fs]
     (if (satisfies? Folding fs)
       (let [that (reduce conj this (pending-events fs))]
-        (FoldingStack. (pending-events that) 
+        (FoldingQueue. (pending-events that) 
                        (into (nodes that) (nodes fs))
                        (+ (nodes-count that) (nodes-count fs))))
       (into this fs)))
@@ -77,32 +79,41 @@
   (cons [this event]
     (u/cond
       (unexpected? event)
-        (FoldingStack. pending (conj complete event) ncnt)
+        (FoldingQueue. pending (conj complete event) ncnt)
       (not (vector? event))
-        (FoldingStack. pending (conj complete event) (inc ncnt))
+        (FoldingQueue. pending (conj complete event) (inc ncnt))
       :let [[_ N tag] event]
       (> N ncnt)
-        (FoldingStack. (concat pending complete [event]) [] 0)
+        (FoldingQueue. (concat pending complete [event]) [] 0)
       :let [children (tail complete N)
             complete (subvec complete 0 (- (count complete) (count children)))
             complete (conj complete (make-node tag children))]
-      :else
-        (FoldingStack. pending complete (inc (- ncnt N)))))
+      (FoldingQueue. pending complete (inc (- ncnt N)))))
   (empty [this]
-    empty-folding-stack)
+    empty-folding-queue)
   (equiv [this that]
-    (boolean (when (or (nil? that) (sequential? that))
-               (= (seq this) (seq that)))))
+    (boolean (and (satisfies? Folding that) (= pending (pending-events that))
+                  (= complete (nodes that)))))
   clojure.lang.Seqable
   (seq [this]
     (seq (concat pending complete)))
-  ; TODO implement hashCode and equals
-  )
+  Object
+  (hashCode [this]
+    (hash-combine (hash pending) complete))
+  (equals [this that]
+    (boolean (and (satisfies? Folding that) (.equals pending (pending-events that))
+                  (.equals complete (nodes that))))))
 
-(def empty-folding-stack (FoldingStack. nil [] 0))
+(def empty-folding-queue (FoldingQueue. nil [] 0))
+
+(defmethod print-method FoldingQueue [fq, ^java.io.Writer w]
+  (.write w "#<FoldingQueue ")
+  (.write w (pr-str (seq fq)))
+  (.write w ">"))
 
 (defn stitchability 
-  "Returns :full, :partial or nil."
+  "Returns :full, or a number (the number of states on A stack which remains untouched)
+   when rebasing is possible or nil."
  [a b]
   (u/cond
     :let [[a-end a-watermark a-events a-start] a
@@ -113,25 +124,26 @@
           b-tail (subvec b-stack b-watermark)
           n (- (count a-stack) (count b-tail))
           a-tail (when-not (neg? n) (subvec a-stack n))]
-    (and a-tail (= a-rem b-start) (= b-tail a-tail)) :partial))
+    (and a-tail (= a-rem b-rem) (= b-tail a-tail))
+      n))
 
+(defn rebase [b a]
+  (u/cond
+    :when-let [st (stitchability a b)] 
+    (= :full st) b
+    ; if it's not full, it's partial
+    :let [[a-end] a
+          [b-end b-watermark b-events] b
+          [a-stack] a-end
+          [b-stack b-rem] b-end
+          b-tail (subvec b-stack b-watermark)
+          watermark st
+          a-stub (subvec a-stack 0 watermark)]
+    [[(into (vec a-stub) b-tail) b-rem] watermark b-events a-end]))
 
 (defn stitch 
- ([a b] (stitch a b make-node))
- ([a b make-node]
+ [a b]
   (when (and a b)
     (let [[a-end a-watermark a-events a-start] a
           [b-end b-watermark b-events b-start] b]
-      (case (stitchability a b)
-        :full [b-end (min a-watermark b-watermark) 
-               (cat a-events b-events) a-start] 
-        #_:partial #_(let [[a-stack] a-end
-                       [b-start-stack] b-start
-                       watermark (- (count a-stack) 
-                                   (- (count b-start-stack) b-watermark)) 
-                       stub (subvec a-stack 0 watermark)
-                       [b-stack b-rem] b-end
-                       tail (subvec b-stack b-watermark)]
-                   [[(into stub tail) b-rem] (min a-watermark watermark)
-                    (stitch-events make-node a-events b-events) a-start]))))))
-
+      [b-end (min a-watermark b-watermark) (cat a-events b-events) a-start])))

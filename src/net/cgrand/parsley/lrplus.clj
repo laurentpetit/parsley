@@ -66,8 +66,7 @@
         (< cp (int 128))
           (when-let [tm (nth ascii-dispatch cp)]
             (match tm s eof))
-        :else
-          (match tm s eof))))
+        (match tm s eof))))
 
 (defn match-prefix? [token-matcher ^String s]
   (when-let [[n] (match token-matcher s false)]
@@ -103,33 +102,34 @@
   (let [[stack _ rem events] state
         s (if (= "" rem) s (str rem s))]
     (loop [stack (transient (or stack [*start*])) events events s s wm (count stack)]
-      (when-let [cs (table (my-peek stack))]
-        (u/cond 
+      (u/cond
+        :when-let [cs (table (my-peek stack))]
           (and (empty? s) (:accept? cs))
-            [(persistent! stack) (dec wm) "" events]
-          :let [action (:reduce cs)]
-          action
+        [(persistent! stack) (dec wm) "" events]
+          [action (:reduce cs)]
             (let [[sym n] action
                   stack (popN! stack n)
                   cs (table (my-peek stack))
                   wm (Math/min wm (count stack))]
               (recur (conj! stack ((:gotos cs) sym)) (conj events action) s wm))
-          :else
-            (u/when-let [tm (:token-matcher cs)
-                       [n id] (match tm s eof)]
-              (if (neg? n)
+          :when-let [tm (:token-matcher cs)]
+          [[n id] (match tm s eof)]
+            (if (neg? n)
                 [(persistent! stack) (dec wm) s events]
                 (let [token (subs s 0 n)
                       s (subs s n)
                       wm (Math/min wm (count stack))]
-                  (recur (conj! stack ((:shifts cs) id)) (conj events token) s wm)))))))))
+                  (recur (conj! stack ((:shifts cs) id)) (conj events token) s wm)))
+          (when-not (empty? s) 
+            (recur stack (conj events (f/make-unexpected (subs s 0 1)))
+                   (subs s 1) wm))))))
 
-(def zero [[[*start*] ""] 0 f/empty-folding-stack nil])
+(def zero [[[*start*] ""] 0 f/empty-folding-queue nil])
 
 (defn step [table state s]
   (u/when-let [[[stack rem :as start]] state
                [new-stack water-mark new-rem events] 
-               (step1 table [stack nil rem f/empty-folding-stack] (or s "") (nil? s))]
+               (step1 table [stack nil rem f/empty-folding-queue] (or s "") (nil? s))]
     [[new-stack new-rem] water-mark events start]))
 
 ;; LR+ table construction
@@ -169,8 +169,7 @@
       (throw (Exception. (apply str "at state " state "\n  reduce/reduce conflict " (interpose "\n" reduces))))
     (and reduction (seq shifts))
       (throw (Exception. (str "at state " state "\n shift/reduce conflict " shifts "\n" reduces)))
-    :else
-      (table-state (matcher (keys shifts)) shifts reduction gotos accept?)))
+    (table-state (matcher (keys shifts)) shifts reduction gotos accept?)))
 
 (defn to-states [{:keys [gotos shifts]}]
   (concat (vals gotos) (vals shifts)))
