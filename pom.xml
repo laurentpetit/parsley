@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <modelVersion>4.0.0</modelVersion>
+        
+        <groupId>org.lpetit</groupId>
+        <artifactId>net.cgrand.parsley</artifactId>
+        <!--
+        <packaging>jar</packaging>
+        -->
+        <packaging>eclipse-plugin</packaging>
+        <version>0.0.8.STABLE01</version>
+        
+        <name>Repackaging by Laurent Petit of Parsley, a creation of Christophe Grand.</name>
+        <description>a DSL for creating parsers in Clojure</description>
+        
+        <url>https://github.com/cgrand/parsley</url>
+        
+        <scm>
+                <url>https://github.com/laurentpetit/parsley</url>
+                <connection>scm:git:git://github.com/laurentpetit/parsley.git</connection>
+                <developerConnection>scm:git:ssh://git@github.com/laurentpetit/parsley.git</developerConnection>
+        </scm>
+
+        <parent>
+                <groupId>ccw</groupId>
+                <artifactId>ccw_pomtemplate</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+        </parent>
+        
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>com.theoryinpractise</groupId>
+                                <artifactId>clojure-maven-plugin</artifactId>
+                                <version>${clojure-maven-plugin.version}</version>
+                                <configuration>
+                                        <sourceDirectories>
+                                                <sourceDirectory>src</sourceDirectory>
+                                        </sourceDirectories>
+                                        <namespaces>
+                                                <namespace>net.cgrand.parsley</namespace>
+                                        </namespaces>
+                                        <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
+                                        <!-- To take advantage of the compilers syntax checking, 
+                                             but wish to prevent any AOT classes from appearing 
+                                             in the maven generated JAR file -->
+                                        <temporaryOutputDirectory>true</temporaryOutputDirectory>
+                                </configuration>
+                                <!--
+                                <executions>
+                                        <execution>
+                                                <phase>compile</phase>
+                                                <goals>
+                                                        <goal>compile</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                                -->
+                        </plugin>
+               </plugins>
+        </build>
+
+        <dependencies>
+                <dependency>
+                        <groupId>ccw</groupId>
+                        <artifactId>ccw.clojure</artifactId>
+                        <version>${ccw.clojure.version}</version>
+                </dependency>
+        </dependencies>
+        
+        <licenses>
+                <license>
+                        <name>Eclipse Public License 1.0</name>
+                        <url>http://opensource.org/licenses/eclipse-1.0.php</url>
+                        <distribution>repo</distribution>
+                </license>
+        </licenses>
+
+        <repositories>
+                <repository>
+                        <id>clojars.org</id>
+                        <layout>default</layout>
+                        <url>http://clojars.org/repo</url>
+                </repository>
+                <repository>
+                        <id>ccw</id>
+                        <layout>p2</layout>
+                        <url>http://updatesite.counterclockwise.googlecode.com/hg/</url>
+                </repository>
+        </repositories>
+
+</project>
