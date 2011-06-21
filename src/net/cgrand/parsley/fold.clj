@@ -8,9 +8,24 @@
                          (into vecs (:content n)) 
                          (conj vecs n))) [] nodes))
 
+(defn- children-info [children]
+  (reduce
+    (fn [[combined count-acc] child]
+      (let [child-count (if (string? child) (count child) (or (:count child) 0))]
+        [(conj combined count-acc) (+ count-acc child-count)]))
+    [[] 0]
+    children))
+
 (defn make-node [tag children]
   (if tag 
-    {:tag tag :content (nodes-vec children)}
+    (let [children (nodes-vec children)
+          [combined count] (children-info children)]
+      {:tag tag 
+       :content children
+       :count count
+       :content-cumulative-count combined})
+    {:tag nil :content (nodes-vec children)}))
+
     {:tag nil :content (nodes-vec children)}))
 
 (defn make-unexpected [s]
