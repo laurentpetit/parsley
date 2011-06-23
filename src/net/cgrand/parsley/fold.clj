@@ -26,8 +26,6 @@
        :content-cumulative-count combined})
     {:tag nil :content (nodes-vec children)}))
 
-    {:tag nil :content (nodes-vec children)}))
-
 (defn make-unexpected [s]
   {:tag ::unexpected :content [s]})
 
