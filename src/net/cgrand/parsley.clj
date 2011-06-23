@@ -211,12 +211,12 @@
           (if (identical? last-result new-result)
             last-result
             (do
-              (println "rebase")
+              ;(println "rebase")
               (reset! cache new-result)
               new-result))
         :let [new-result (f input)]
         (do
-          (prn "cache miss")
+          ;(prn "cache miss")
           (reset! cache new-result)
           new-result)))))
 
