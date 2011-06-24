@@ -103,7 +103,7 @@
 
 (defn popN! [stack n]
   (if (pos? n)
-    (recur (pop! stack) (dec n))
+    (recur (pop stack) (dec n))
     stack))
 
 (defn step1
