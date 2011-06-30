@@ -5,7 +5,7 @@
   (popN! [this n])
   (peek! [this]))
 
-(deftype Stack [^java.util.ArrayList list ^:unsynchronized-mutable ^long wm]
+(deftype Stack [^java.util.ArrayList list ^{:unsynchronized-mutable true} ^long wm]
   EphemeralStack
   (push! [this x]
     (.add list x)
