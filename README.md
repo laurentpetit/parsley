@@ -9,11 +9,11 @@ This repo is not the official one. It is a clone done by Laurent Petit, exposing
         <dependency>
                 <groupId>org.lpetit</groupId>
                 <artifactId>net.cgrand.parsley</artifactId>
-                <version>0.0.6.STABLE02</version>
+                <version>0.0.9.STABLE001</version>
         </dependency>
 
 ##lein/cake:
-        [org.lpetit/net.cgrand.parsley "0.0.6.STABLE02"]
+        [org.lpetit/net.cgrand.parsley "0.0.9.STABLE001"]
 
 # Dependencies
 
