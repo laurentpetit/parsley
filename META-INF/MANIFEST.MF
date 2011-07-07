@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Parsley
 Bundle-SymbolicName: net.cgrand.parsley;singleton:=true
-Bundle-Version: 0.0.8.STABLE01
+Bundle-Version: 0.0.9.STABLE001
 Bundle-ClassPath: .,
  classes/
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Christophe Grand
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.cgrand,
- net.cgrand.parsley;version="0.0.7.STABLE02"
+ net.cgrand.parsley;version="0.0.9"
 Import-Package: clojure;version="1.2.0",
  clojure.asm;version="1.2.0",
  clojure.asm.commons;version="1.2.0",
