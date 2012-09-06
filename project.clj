@@ -1,5 +1,4 @@
-(defproject org.lpetit/net.cgrand.parsley "0.0.9.STABLE001"
+(defproject org.lpetit/net.cgrand.parsley "0.0.12.STABLE001"
   :description "a DSL for creating parsers in Clojure"
-  :url "https://github.com/cgrand/parsley"
-  :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.clojure/clojure-contrib "1.2.0"]])
+  :url "https://github.com/laurentpetit/parsley"
+  :dependencies [[org.clojure/clojure "1.3.0"]])
