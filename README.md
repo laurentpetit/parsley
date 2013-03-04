@@ -13,8 +13,8 @@ This repo is not the official one. It is a clone done by Laurent Petit, exposing
         </dependency>
 
 ##lein/cake:
-        [org.lpetit/net.cgrand.parsley "0.0.9.STABLE001"]
+        [org.lpetit/net.cgrand.parsley "0.0.13.STABLE002"]
 
 # Dependencies
 
-* Clojure 1.2
+* Clojure 1.5
